@@ -1,0 +1,2 @@
+def craft():
+    print("hello")
