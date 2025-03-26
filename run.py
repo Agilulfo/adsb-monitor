@@ -1,14 +1,18 @@
-import socket
-
-import helipad.craft as c
 import logging
 import datetime
 
+import helipad.config.logging
+from helipad.streams import StreamReader
+
+
+helipad.config.logging.init_logging()
 logger = logging.getLogger(__name__)
+
 
 def timestamp():
     now = datetime.datetime.now(datetime.UTC)
     return now.strftime("%Y%m%d_%H%M%S")
+
 
 def main():
     #
@@ -20,8 +24,7 @@ def main():
 
     handler = MessageHandler()
 
-
-    with open(f"{timestamp()}_dump.txt", 'w') as dump:
+    with open(f"{timestamp()}_dump.txt", "w") as dump:
         while True:
             message = stream.read_line()
             dump.write(f"{message}\n")
@@ -41,7 +44,7 @@ class MessageHandler:
             logger.warning(f"Got an unrecognized message: {message}")
             return
         if segments[1] == "7":
-            logger.debug(f"Ignoring message of type 7")
+            logger.debug("Ignoring message of type 7")
             return
         if segments[2] != "111" or segments[3] != "11111" or segments[5] != "111111":
             logger.warning(
@@ -50,7 +53,9 @@ class MessageHandler:
             return
 
         timestamp_format = "%Y/%m/%d%H:%M:%S.%f"
-        timestamp = datetime.datetime.strptime(f"{segments[8]}{segments[9]}", timestamp_format)
+        timestamp = datetime.datetime.strptime(
+            f"{segments[8]}{segments[9]}", timestamp_format
+        )
         message_type = segments[1]
         aircraft_id = segments[4]
         relevant_segments = []
@@ -58,30 +63,6 @@ class MessageHandler:
             if segments[field_index] != "":
                 relevant_segments.append((field_index, segments[field_index]))
         print(f"MSG {timestamp} {message_type} {aircraft_id} {relevant_segments}")
-
-
-class StreamReader:
-    def __init__(self, address, port):
-        self.socket = socket.create_connection((address, port))
-        self.buffer = b""
-
-    def read_line(self):
-        line = self.extract_line()
-
-        while line is None:
-            # TODO: handle socket close
-            # TODO: tweak message length
-            self.buffer = b"".join([self.buffer, self.socket.recv(10)])
-            line = self.extract_line()
-        return line.decode("utf-8")
-
-    def extract_line(self):
-        newline = b"\r\n"
-        first, separator, second = self.buffer.partition(newline)
-        if separator == newline:
-            self.buffer = second
-            return first
-        return None
 
 
 if __name__ == "__main__":
