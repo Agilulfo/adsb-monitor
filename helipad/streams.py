@@ -23,3 +23,14 @@ class StreamReader:
             self.buffer = second
             return first
         return None
+
+
+class FileReader:
+    def __init__(self, filename):
+        self.source = open(filename)
+
+    def read_line(self):
+        line = self.source.readline()
+        if line == "":
+            raise Exception("EOF")
+        return line
