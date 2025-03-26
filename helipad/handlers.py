@@ -39,7 +39,9 @@ class MessageHandler:
 
 class DumpHandler:
     def __init__(self, filename=None):
-        self.dump_file = open(filename or self.__class__.default_filename(), "w", buffering=1)
+        self.dump_file = open(
+            filename or self.__class__.default_filename(), "w", buffering=1
+        )
 
     def default_filename():
         now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")
@@ -47,4 +49,3 @@ class DumpHandler:
 
     def handle_message(self, message):
         self.dump_file.write(f"{message}\n")
-
