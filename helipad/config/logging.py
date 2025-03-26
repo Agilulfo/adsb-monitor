@@ -15,7 +15,10 @@ def init_logging():
                 "formatter": "simple",
             }
         },
-        "loggers": {"__main__": {"handlers": ["to_file"], "level": logging.DEBUG}},
+        "loggers": {
+            "__main__": {"handlers": ["to_file"], "level": logging.DEBUG},
+            "helipad.handlers": {"handlers": ["to_file"], "level": logging.DEBUG},
+        },
         "root": {"handlers": ["to_file"]},
     }
 
