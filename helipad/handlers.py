@@ -37,11 +37,14 @@ class MessageHandler:
         print(f"MSG {timestamp} {message_type} {aircraft_id} {relevant_segments}")
 
 
-# class DumpHandler:
-#     def __init__(self, filename=None):
-#         self.dump_file = open(filename or self.__class__.default_filename(), 'w'
+class DumpHandler:
+    def __init__(self, filename=None):
+        self.dump_file = open(filename or self.__class__.default_filename(), "w")
 
+    def default_filename():
+        now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")
+        return f"{now}_dump.txt"
 
-#     def default_filename():
-#         now = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")
-#         return f"{now}_dump.txt"
+    def handle_message(self, message):
+        self.dump_file.write(f"{message}\n")
+        self.dump_file.flush()
