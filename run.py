@@ -2,10 +2,13 @@ import socket
 
 import helipad.craft as c
 import logging
-from datetime import datetime
+import datetime
 
 logger = logging.getLogger(__name__)
 
+def timestamp():
+    now = datetime.datetime.now(datetime.UTC)
+    return now.strftime("%Y%m%d_%H%M%S")
 
 def main():
     #
@@ -17,19 +20,13 @@ def main():
 
     handler = MessageHandler()
 
-    while True:
-        handler.handle_message(stream.read_line())
-    # planes = {}
 
-    # while True:
-    #     message = stream.read_line()
-    #     message_sections = message.split(',')
-
-    #     if message_sections[0] != "MSG":
-    #         print(f"interesting... got: {message}")
-
-    # TODO: Log new plane detected and callsign + timestamp
-    # TODO: Log new values for each variable and a log of such type of message
+    with open(f"{timestamp()}_dump.txt", 'w') as dump:
+        while True:
+            message = stream.read_line()
+            dump.write(f"{message}\n")
+            dump.flush()
+            handler.handle_message(message)
 
 
 class MessageHandler:
@@ -53,7 +50,7 @@ class MessageHandler:
             return
 
         timestamp_format = "%Y/%m/%d%H:%M:%S.%f"
-        timestamp = datetime.strptime(f"{segments[8]}{segments[9]}", timestamp_format)
+        timestamp = datetime.datetime.strptime(f"{segments[8]}{segments[9]}", timestamp_format)
         message_type = segments[1]
         aircraft_id = segments[4]
         relevant_segments = []
