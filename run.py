@@ -2,7 +2,7 @@ import argparse
 import helipad.config.logging as app_logging
 
 from helipad.streams import StreamReader, FileReader
-from helipad.handlers import MessageHandler, DumpHandler
+from helipad.handlers import FootprintDetector, DumpHandler
 
 app_logging.init_logging()
 
@@ -46,7 +46,7 @@ def main():
         handlers.append(DumpHandler(args.dumpto))
 
     # mandatory handlers
-    handlers.append(MessageHandler())
+    handlers.append(FootprintDetector())
 
     # main loop
     while True:

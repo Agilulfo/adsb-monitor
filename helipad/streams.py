@@ -58,7 +58,7 @@ class FileReader:
         self.source = open(filename)
 
     def read_line(self):
-        line = self.source.readline()
+        line = self.source.readline().removesuffix("\n")
         if line == "":
-            raise Exception("EOF")
+            raise EOFError()
         return line
