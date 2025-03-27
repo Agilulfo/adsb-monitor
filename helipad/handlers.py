@@ -16,7 +16,8 @@ class MessageHandler:
             logger.warning(f"Got an unrecognized message: {message}")
             return
         if segments[1] == "7":
-            logger.debug("Ignoring message of type 7")
+            # this type of message does not have any relevance
+            # it looks like it is sent by some ground station or something
             return
         if segments[2] != "111" or segments[3] != "11111" or segments[5] != "111111":
             logger.warning(
