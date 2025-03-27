@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 class MessageHandler:
     def __init__(self):
         self.aircrafts = dict()
+        self.seen_messages = set()
 
     def handle_message(self, message):
         segments = message.split(",")
@@ -35,7 +36,18 @@ class MessageHandler:
         for field_index in range(10, 22):
             if segments[field_index] != "":
                 relevant_segments.append((field_index, segments[field_index]))
-        print(f"MSG {timestamp} {message_type} {aircraft_id} {relevant_segments}")
+
+        # build message footprint
+        footprint = [int(message_type)]
+        for (index, _value) in relevant_segments:
+            footprint.append(index + 1)
+        footprint = tuple(footprint)
+
+        if footprint not in self.seen_messages:
+            self.seen_messages.add(footprint)
+            print(f"New message: {footprint}")
+            print(message)
+
 
 
 class DumpHandler:
