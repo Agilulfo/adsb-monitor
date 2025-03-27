@@ -1,22 +1,50 @@
 import socket
+import logging
+from time import sleep
+
+logger = logging.getLogger(__name__)
 
 
 class StreamReader:
     def __init__(self, address, port):
-        self.socket = socket.create_connection((address, port))
+        self.address = (address, port)
+        self._connect_socket()
         self.buffer = b""
 
+    def _connect_socket(self):
+        logger.info(f"Connecting to: {self.address}")
+
+        self.socket = None
+        while self.socket is None:
+            try:
+                self.socket = socket.create_connection(self.address)
+            except ConnectionRefusedError:
+                logger.warning(f"Failed connection to: {self.address}, retrying soon")
+                sleep(5)
+
+        logger.info(f"Connected to: {self.address}")
+
     def read_line(self):
-        line = self.extract_line()
+        line = self._extract_line()
 
         while line is None:
-            # TODO: handle socket close
-            # TODO: tweak message length
-            self.buffer = b"".join([self.buffer, self.socket.recv(10)])
-            line = self.extract_line()
+            self.buffer = b"".join([self.buffer, self._read_from_socket()])
+            line = self._extract_line()
+
         return line.decode("utf-8")
 
-    def extract_line(self):
+    def _read_from_socket(self):
+        message = self.socket.recv(200)
+
+        # handle socket disconnection
+        if message == b"":
+            logging.warning(f"Socket: {self.address} disconnected")
+            self._connect_socket()
+            message = self.socket.recv(200)
+
+        return message
+
+    def _extract_line(self):
         newline = b"\r\n"
         first, separator, second = self.buffer.partition(newline)
         if separator == newline:
