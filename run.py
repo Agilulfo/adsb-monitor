@@ -1,8 +1,10 @@
 import argparse
 import helipad.config.logging as app_logging
+import helipad.config
 
 from helipad.streams import StreamReader, FileReader
-from helipad.handlers import FootprintDetector, DumpHandler
+from helipad.handlers import FootprintDetector, DumpHandler, AirTracking
+from helipad.message import ADSBMessage
 
 app_logging.init_logging()
 
@@ -41,18 +43,22 @@ def main():
     # build handlers
     handlers = []
 
+    config = helipad.config.from_file("config.yaml")
+
     # optional handlers
     if args.dump or args.dumpto:
         handlers.append(DumpHandler(args.dumpto))
 
     # mandatory handlers
     handlers.append(FootprintDetector())
+    # handlers.append(AirTracking())
 
     # main loop
     while True:
-        message = stream.read_line()
-        for handler in handlers:
-            handler.handle_message(message)
+        message = ADSBMessage(stream.read_line())
+        if not message.ignore():
+            for handler in handlers:
+                handler.handle_message(message)
 
 
 if __name__ == "__main__":
