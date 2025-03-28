@@ -73,7 +73,7 @@ def not_msg_type_filter(message):
     Log and pass messages that
     """
     if message["type"] != "MSG":
-        logger.warning(f"Got an unrecognized message: {message["raw"]}")
+        logger.warning(f"Got an unrecognized message: {message['raw']}")
         return True
     return False
 
@@ -94,7 +94,7 @@ def unusual_ids_filter(message):
         or message["aircraft_id"] != "11111"
         or message["flight_id"] != "111111"
     ):
-        logger.warning(f"Got message with unexpected values: {message["raw"]}")
+        logger.warning(f"Got message with unexpected values: {message['raw']}")
         return True
     return False
 
