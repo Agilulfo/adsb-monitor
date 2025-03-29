@@ -11,4 +11,5 @@ wheels/
 
 # local files
 logs.txt
+config.yaml
 *_dump.txt
