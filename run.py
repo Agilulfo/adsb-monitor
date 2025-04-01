@@ -5,6 +5,7 @@ import helipad.config
 from helipad.streams import StreamReader, FileReader
 from helipad.handlers import FootprintDetector, DumpHandler, AirTracking
 from helipad.message import ADSBMessage
+from helipad.poi import load_pois
 
 app_logging.init_logging()
 
@@ -33,6 +34,10 @@ def main():
     parser = init_parser()
     args = parser.parse_args()
 
+    # Load configuration
+    config = helipad.config.from_file("config.yaml")
+    load_pois(config["poi"])
+
     # Pick stream
     stream = None
     if args.fromfile:
@@ -42,8 +47,6 @@ def main():
 
     # build handlers
     handlers = []
-
-    config = helipad.config.from_file("config.yaml")
 
     # optional handlers
     if args.dump or args.dumpto:
