@@ -12,7 +12,7 @@ def get_poi(name):
 
 
 def reset_pois():
-    POIs = dict()
+    POIs.clear()
 
 
 class PointOfIntrest:
