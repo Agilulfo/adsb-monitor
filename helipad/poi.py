@@ -11,6 +11,10 @@ def get_poi(name):
     return POIs.get(name)
 
 
+def reset_pois():
+    POIs = dict()
+
+
 class PointOfIntrest:
     def __init__(self, description):
         self.name = description["name"]
