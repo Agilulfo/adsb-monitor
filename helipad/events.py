@@ -1,5 +1,17 @@
 from helipad.poi import get_poi
 
+EVENTS = []
+
+def load_events(descriptions):
+    for description in descriptions:
+        event = Event(description)
+        EVENTS.append(event)
+
+def reset_events():
+    EVENTS.clear()
+
+def get_events():
+    return EVENTS
 
 class Event:
     def __init__(self, description):

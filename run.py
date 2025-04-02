@@ -6,6 +6,7 @@ from helipad.streams import StreamReader, FileReader
 from helipad.handlers import FootprintDetector, DumpHandler, AirTracking
 from helipad.message import ADSBMessage
 from helipad.poi import load_pois
+from helipad.events import load_events
 
 app_logging.init_logging()
 
@@ -37,6 +38,7 @@ def main():
     # Load configuration
     config = helipad.config.from_file("config.yaml")
     load_pois(config["poi"])
+    load_events(config["events"])
 
     # Pick stream
     stream = None
